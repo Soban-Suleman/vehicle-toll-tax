@@ -36,13 +36,22 @@ const data: Interchange[] = [
   },
 ];
 
-interface Interchange {
+export interface Interchange {
   entryPoint: string;
   distance: number;
   key: number;
 }
 
-export default data;
+export function ensure<T>(
+  argument: T | undefined | null,
+  message: string = "This value was promised to be there."
+): T {
+  if (argument === undefined || argument === null) {
+    throw new TypeError(message);
+  }
 
-export const getEntryExitDetails = (key: number) =>
-  data.find((points) => points.key === key);
+  return argument;
+}
+
+export const getEntryExitDetails = (key: number | undefined) =>
+  ensure(data.find((points) => points.key === key));

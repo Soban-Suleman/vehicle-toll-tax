@@ -63,3 +63,20 @@ export const isOddOrEven = (
     next(error);
   }
 };
+
+export const alreadyExists = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) =>
+  VehicleToll.exists({
+    $and: [{ vehicleNumber: req.body.vehicleNumber }, { exitStatus: false }],
+  })
+    .then((data) => {
+      if (data)
+        return res.status(400).json({
+          message: "Vehicle with same information is already entered",
+        });
+      else next();
+    })
+    .catch((e) => next(e));

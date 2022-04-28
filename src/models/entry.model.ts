@@ -6,6 +6,8 @@ export interface IVehicle {
   exitPoint?: number;
   dateTimeEntry?: string;
   dateTimeExit?: string;
+  discount: number;
+  exitStatus: boolean;
 }
 
 interface IVehicleModel extends Document, IVehicle {
@@ -19,6 +21,8 @@ const vehicleTollSchema = new Schema<IVehicleModel>(
     exitPoint: { type: Number },
     dateTimeEntry: { type: String },
     dateTimeExit: { type: String },
+    discount: Number,
+    exitStatus: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -1,19 +1,30 @@
 import { NextFunction, Request, Response } from "express";
+import { ensure, getEntryExitDetails } from "../data";
 import { discountCalculator } from "../helper";
 import { VehicleToll } from "../models";
-import { IVehicle } from "../models/entry.model";
-
 export const enterVehicle = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { vehicleNumber, dateTimeEntry, entryPoint }: IVehicle = req.body;
+    const {
+      vehicleNumber,
+      dateTimeEntry,
+      entryPoint,
+      numberPlateInfo,
+    }: {
+      vehicleNumber: string;
+      dateTimeEntry: string;
+      entryPoint: number;
+      numberPlateInfo: "odd" | "even";
+    } = req.body;
+    const discount = discountCalculator(dateTimeEntry, numberPlateInfo);
     await VehicleToll.create({
       vehicleNumber,
       dateTimeEntry,
       entryPoint,
+      discount,
     });
     res.status(201).json({ message: "Vehicle entry done" });
   } catch (error) {
@@ -27,12 +38,30 @@ export const exitVehicle = async (
   next: NextFunction
 ) => {
   try {
-    const { vehicleNumber, numberPlateInfo } = req.body;
-    const record = await VehicleToll.findOne({ vehicleNumber });
-    console.log(
-      discountCalculator(record?.createdAt as string, numberPlateInfo)
+    let BASE_RATE = 0.2;
+    const {
+      vehicleNumber,
+      exitPoint,
+    }: { vehicleNumber: string; exitPoint: string } = req.body;
+    const record = ensure(
+      await VehicleToll.findOne({
+        $and: [{ vehicleNumber }, { exitStatus: false }],
+      })
     );
-    res.status(200).json({ message: "done" });
+    const entryDetails = getEntryExitDetails(record?.entryPoint);
+    const exitDetails = getEntryExitDetails(parseInt(exitPoint));
+    const exitDay = new Date().toDateString().split(" ")[0];
+    if (exitDay === "Sat" || exitDay === "Sun") BASE_RATE = 1.5 * BASE_RATE;
+    const distance = exitDetails?.distance - entryDetails?.distance;
+    record.exitStatus = true;
+    await record.save();
+    res.status(201).json({
+      baseRate: BASE_RATE,
+      totalDistance: distance,
+      subTotal: distance * BASE_RATE,
+      discount: record?.discount,
+      toBeCharged: ((record?.discount as number) * distance * BASE_RATE) / 100,
+    });
   } catch (error) {
     next(error);
   }

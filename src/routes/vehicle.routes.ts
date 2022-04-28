@@ -4,6 +4,7 @@ import {
   exitVehicle,
 } from "../controllers/vehicletoll.controller";
 import {
+  alreadyExists,
   isOddOrEven,
   isValidVehicleNumber,
   isVehicleEntered,
@@ -11,14 +12,14 @@ import {
 
 const router: Router = Router();
 
-router.post("/entry", isValidVehicleNumber, enterVehicle);
-
-router.patch(
-  "/exit",
+router.post(
+  "/entry",
   isValidVehicleNumber,
-  isVehicleEntered,
+  alreadyExists,
   isOddOrEven,
-  exitVehicle
+  enterVehicle
 );
+
+router.patch("/exit", isValidVehicleNumber, isVehicleEntered, exitVehicle);
 
 export default router;

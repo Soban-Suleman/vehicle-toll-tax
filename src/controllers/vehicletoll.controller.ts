@@ -39,6 +39,7 @@ export const exitVehicle = async (
 ) => {
   try {
     let BASE_RATE = 0.2;
+    let BASE_FARE = 20;
     const {
       vehicleNumber,
       exitPoint,
@@ -46,7 +47,8 @@ export const exitVehicle = async (
     const record = ensure(
       await VehicleToll.findOne({
         $and: [{ vehicleNumber }, { exitStatus: false }],
-      })
+      }),
+      "Vehicle With given details Not Found"
     );
     const entryDetails = getEntryExitDetails(record?.entryPoint);
     const exitDetails = getEntryExitDetails(parseInt(exitPoint));
@@ -60,7 +62,8 @@ export const exitVehicle = async (
       totalDistance: distance,
       subTotal: distance * BASE_RATE,
       discount: record?.discount,
-      toBeCharged: ((record?.discount as number) * distance * BASE_RATE) / 100,
+      toBeCharged:
+        ((record?.discount as number) * distance * BASE_RATE) / 100 + BASE_FARE,
     });
   } catch (error) {
     next(error);

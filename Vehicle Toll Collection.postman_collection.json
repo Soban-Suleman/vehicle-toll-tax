@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "feec88ca-e62b-426f-a4e7-d32973129479",
+		"name": "Vehicle Toll Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Vehicle Entry",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "vehicleNumber",
+							"value": "LEC-4040",
+							"type": "default"
+						},
+						{
+							"key": "dateTimeEntry",
+							"value": "2022-04-27",
+							"type": "default"
+						},
+						{
+							"key": "entryPoint",
+							"value": "1",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL}}/vehicle/entry",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"vehicle",
+						"entry"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Vehicle Exit",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "vehicleNumber",
+							"value": "LEC-4040",
+							"type": "default"
+						},
+						{
+							"key": "dateTimeExit",
+							"value": "2022-04-30",
+							"type": "default"
+						},
+						{
+							"key": "exitPoint",
+							"value": "7",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL}}/vehicle/exit",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"vehicle",
+						"exit"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

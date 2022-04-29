@@ -47,11 +47,14 @@ export function ensure<T>(
   message: string = "This value was promised to be there."
 ): T {
   if (argument === undefined || argument === null) {
-    throw new TypeError(message);
+    throw new Error(message);
   }
 
   return argument;
 }
 
 export const getEntryExitDetails = (key: number | undefined) =>
-  ensure(data.find((points) => points.key === key));
+  ensure(
+    data.find((points) => points.key === key),
+    "Entry Or Exit Point Provided was not in the records"
+  );

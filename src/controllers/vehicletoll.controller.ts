@@ -50,20 +50,20 @@ export const exitVehicle = async (
       }),
       "Vehicle With given details Not Found"
     );
-    const entryDetails = getEntryExitDetails(record?.entryPoint);
+    const entryDetails = getEntryExitDetails(record.entryPoint);
     const exitDetails = getEntryExitDetails(parseInt(exitPoint));
     const exitDay = new Date().toDateString().split(" ")[0];
     if (exitDay === "Sat" || exitDay === "Sun") BASE_RATE = 1.5 * BASE_RATE;
-    const distance = exitDetails?.distance - entryDetails?.distance;
+    const distance = exitDetails.distance - entryDetails.distance;
     record.exitStatus = true;
     await record.save();
     res.status(201).json({
       baseRate: BASE_RATE,
       totalDistance: distance,
       subTotal: distance * BASE_RATE,
-      discount: record?.discount,
+      discount: record.discount,
       toBeCharged:
-        ((record?.discount as number) * distance * BASE_RATE) / 100 + BASE_FARE,
+        ((record.discount as number) * distance * BASE_RATE) / 100 + BASE_FARE,
     });
   } catch (error) {
     next(error);
